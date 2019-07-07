@@ -1,0 +1,12 @@
+backend/.mvn
+backend/mvnw
+backend/mvnw.cmd
+backend/.idea
+**application.properties
+
+client/node_modules
+client/.pnp
+client/.pnp.js
+client/coverage
+client/build
+client/*.log*
