@@ -1,7 +1,9 @@
 package io.gtrain.handler;
 
-import io.gtrain.authentication.EmsRegistrationService;
 import io.gtrain.domain.dto.RegistrationForm;
+import io.gtrain.domain.dto.ValidationErrorMessage;
+import io.gtrain.domain.exception.RegistrationFormValidationException;
+import io.gtrain.security.authentication.EmsRegistrationService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -23,6 +25,6 @@ public class RegistrationHandler {
 		return request.bodyToMono(RegistrationForm.class)
 				.flatMap(registrationService::attemptRegistration)
 				.flatMap(details -> ServerResponse.ok().build())
-				.switchIfEmpty(ServerResponse.unprocessableEntity().build());
+				.onErrorResume(RegistrationFormValidationException.class, err -> ServerResponse.status(err.getHttpStatus()).body(err.getValidationMessage(), ValidationErrorMessage.class));
 	}
 }

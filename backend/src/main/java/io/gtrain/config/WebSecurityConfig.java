@@ -1,6 +1,7 @@
 package io.gtrain.config;
 
-import io.gtrain.authentication.EmsAuthenticationManager;
+import io.gtrain.security.authentication.EmsAuthenticationManager;
+import io.gtrain.security.authentication.EmsTokenAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,8 +14,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 
-import java.util.Arrays;
-
 /**
  * @author William Gentry
  */
@@ -24,6 +23,9 @@ public class WebSecurityConfig {
 
 	@Autowired
 	private EmsAuthenticationManager authenticationManager;
+
+	@Autowired
+	private EmsTokenAuthenticationFilter tokenAuthenticationFilter;
 
 	@Bean
 	public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
@@ -40,7 +42,9 @@ public class WebSecurityConfig {
 
 		http.csrf().disable();
 
-		http.addFilterAt(corsWebFilter(), SecurityWebFiltersOrder.FIRST);
+		http.addFilterAt(corsWebFilter(), SecurityWebFiltersOrder.CORS);
+
+		http.addFilterAt(tokenAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION);
 
 		return http.build();
 	}

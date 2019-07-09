@@ -2,7 +2,8 @@ backend/.mvn
 backend/mvnw
 backend/mvnw.cmd
 backend/.idea
-**application.properties
+backend/target/
+backend/src/main/resources/
 
 client/node_modules
 client/.pnp

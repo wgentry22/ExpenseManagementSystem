@@ -1,4 +1,4 @@
-package io.gtrain.authentication;
+package io.gtrain.security.authentication;
 
 import io.gtrain.domain.repository.interfaces.EmsUserRepository;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;

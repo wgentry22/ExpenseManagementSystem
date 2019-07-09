@@ -4,6 +4,7 @@ import { Formik, Form } from 'formik';
 import { NavLink } from 'react-router-dom';
 import * as Yup from 'yup';
 import { TextField, Card, CardHeader, CardContent, CardActions, Button, makeStyles, Box } from '@material-ui/core';
+import { ApplicationSnackbar } from '../components/ApplicationSnackbar';
 
 const LoginFormSchema = Yup.object().shape({
   userId: Yup.string().required('Required'),
@@ -15,7 +16,8 @@ const attemptAuthentication = form => {
     method: 'POST', 
     mode: 'cors',
     headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
+      'Content-Type': 'application/json;charset=UTF-8',
+      'Access-Control-Allow-Origin': 'http://localhost:3000'
     },
     body: JSON.stringify(form)
   });
@@ -32,8 +34,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Login = props => {
+
   const styles = useStyles();
 
+  const { hasError } = props;
 
   return (
     <Container maxWidth={'md'} className={styles.form}>
@@ -46,23 +50,17 @@ const Login = props => {
         validationSchema={LoginFormSchema}
 
         onSubmit={async (values, actions) => {
-          try {
-            const response = await attemptAuthentication(values);
-            if (response.ok) {
-              alert('Authentication works!');
-            } else {
-              response.text().then(data => actions.setStatus({ creds: data }));
-            }
-          } catch (e) {
+          const response = await attemptAuthentication(values);
+          if (response.ok) {
+            const token = await response.json().then(data => data.token);
+            document.cookie = `api_token=${token}; path=/; `
+            props.history.push("/home");
+            return;
+          } else {
+            response.text().then(data => actions.setStatus({ creds: data }));
             actions.setSubmitting(false);
             actions.setTouched({
-              userId: false,
-              password: false
-            })
-          } finally {
-            actions.setSubmitting(false);
-            actions.setTouched({
-              userId: false,
+              userId: false, 
               password: false
             })
           }
@@ -72,7 +70,6 @@ const Login = props => {
           errors,
           status,
           touched,
-          dirty,
           handleChange,
           isSubmitting,
         }) => (
@@ -86,7 +83,7 @@ const Login = props => {
                     name="userId"
                     id="userId"
                     label={"User ID"}
-                    error={(touched.userId && dirty.userId) || Boolean(errors.userId)}
+                    error={touched.userId || Boolean(errors.userId)}
                     fullWidth
                     margin={'normal'}
                     onChange={handleChange}
@@ -97,7 +94,7 @@ const Login = props => {
                     name="password"
                     id="password"
                     label={"Password"}
-                    error={(touched.password && dirty.password) || Boolean(errors.password)}
+                    error={touched.password || Boolean(errors.password)}
                     fullWidth
                     margin={'normal'}
                     onChange={handleChange}
@@ -135,6 +132,12 @@ const Login = props => {
         )}
       >
       </Formik>
+      <ApplicationSnackbar 
+        key={'unauthenticated-snackbar'}
+        variant="error"
+        open={hasError} 
+        message={'You must sign in before continuing'} 
+      />
     </Container>
   )
 

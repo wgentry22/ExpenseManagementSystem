@@ -1,7 +1,8 @@
-package io.gtrain.authentication;
+package io.gtrain.security.authentication;
 
 import io.gtrain.domain.model.EmsAuthenticationToken;
 import io.gtrain.domain.model.interfaces.EmsUserDetails;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -13,6 +14,7 @@ import reactor.core.publisher.Mono;
 /**
  * @author William Gentry
  */
+@Primary
 @Service
 public class EmsAuthenticationManager implements ReactiveAuthenticationManager {
 

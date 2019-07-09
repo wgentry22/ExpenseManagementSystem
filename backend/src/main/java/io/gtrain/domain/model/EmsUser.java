@@ -31,13 +31,29 @@ public class EmsUser implements EmsUserDetails {
 
 	private final List<EmsAuthority> authorities;
 
+	@JsonIgnore
 	private final boolean enabled;
 
+	@JsonIgnore
 	private final boolean accountNonLocked;
 
+	@JsonIgnore
 	private final boolean accountNonExpired;
 
+	@JsonIgnore
 	private final boolean credentialsNonExpired;
+
+	public EmsUser(ObjectId id, String username, String email, String password, List<EmsAuthority> authorities, boolean enabled, boolean accountNonLocked, boolean accountNonExpired, boolean credentialsNonExpired) {
+		this.id = id;
+		this.username = username;
+		this.email = email;
+		this.password = password;
+		this.authorities = authorities;
+		this.enabled = enabled;
+		this.accountNonLocked = accountNonLocked;
+		this.accountNonExpired = accountNonExpired;
+		this.credentialsNonExpired = credentialsNonExpired;
+	}
 
 	@PersistenceConstructor
 	public EmsUser(String username, String email, String password, List<EmsAuthority> authorities, boolean enabled, boolean accountNonLocked, boolean accountNonExpired, boolean credentialsNonExpired) {

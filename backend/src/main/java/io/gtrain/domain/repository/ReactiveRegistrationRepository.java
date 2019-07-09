@@ -26,6 +26,6 @@ public class ReactiveRegistrationRepository implements RegistrationRepository {
 
 	@Override
 	public Mono<UserDetails> attemptRegistration(EmsUser user) {
-		return mongoTemplate.save(user, "ems-user");
+		return mongoTemplate.save(user, "ems_user");
 	}
 }
