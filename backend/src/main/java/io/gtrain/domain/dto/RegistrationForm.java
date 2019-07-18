@@ -1,7 +1,6 @@
 package io.gtrain.domain.dto;
 
-import io.gtrain.domain.model.Address;
-import io.gtrain.domain.model.Name;
+import io.gtrain.domain.model.AccountType;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -29,9 +28,17 @@ public class RegistrationForm {
 
 	private String zipCode;
 
+	private double balance;
+
+	private AccountType type;
+
+	private String accountName;
+
+	private double monthlyDeposits;
+
 	public RegistrationForm() {}
 
-	public RegistrationForm(String username, String email, String password, String firstname, String lastname, String street, String city, String state, String zipCode) {
+	public RegistrationForm(String username, String email, String password, String firstname, String lastname, String street, String city, String state, String zipCode, double balance, AccountType type, String accountName, double monthlyDeposits) {
 		this.username = username;
 		this.email = email;
 		this.password = password;
@@ -41,6 +48,10 @@ public class RegistrationForm {
 		this.city = city;
 		this.state = state;
 		this.zipCode = zipCode;
+		this.balance = balance;
+		this.type = type;
+		this.accountName = accountName;
+		this.monthlyDeposits = monthlyDeposits;
 	}
 
 	public String getUsername() {
@@ -115,12 +126,46 @@ public class RegistrationForm {
 		this.zipCode = zipCode;
 	}
 
+	public double getBalance() {
+		return balance;
+	}
+
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+
+	public AccountType getType() {
+		return type;
+	}
+
+	public void setType(AccountType type) {
+		this.type = type;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public double getMonthlyDeposits() {
+		return monthlyDeposits;
+	}
+
+	public void setMonthlyDeposits(double monthlyDeposits) {
+		this.monthlyDeposits = monthlyDeposits;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		RegistrationForm that = (RegistrationForm) o;
-		return Objects.equals(username, that.username) &&
+		return Double.compare(that.balance, balance) == 0 &&
+						Double.compare(that.monthlyDeposits, monthlyDeposits) == 0 &&
+						Objects.equals(username, that.username) &&
 						Objects.equals(email, that.email) &&
 						Objects.equals(password, that.password) &&
 						Objects.equals(firstname, that.firstname) &&
@@ -128,12 +173,14 @@ public class RegistrationForm {
 						Objects.equals(street, that.street) &&
 						Objects.equals(city, that.city) &&
 						Objects.equals(state, that.state) &&
-						Objects.equals(zipCode, that.zipCode);
+						Objects.equals(zipCode, that.zipCode) &&
+						type == that.type &&
+						Objects.equals(accountName, that.accountName);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(username, email, password, firstname, lastname, street, city, state, zipCode);
+		return Objects.hash(username, email, password, firstname, lastname, street, city, state, zipCode, balance, type, accountName, monthlyDeposits);
 	}
 
 	@Override
@@ -148,6 +195,10 @@ public class RegistrationForm {
 						.add("city='" + city + "'")
 						.add("state='" + state + "'")
 						.add("zipCode='" + zipCode + "'")
+						.add("balance=" + balance)
+						.add("type=" + type)
+						.add("accountName='" + accountName + "'")
+						.add("monthlyDeposits=" + monthlyDeposits)
 						.toString();
 	}
 }

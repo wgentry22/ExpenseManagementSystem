@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 /**
  * @author William Gentry
  */
-public abstract class GenericMessage<T> {
+public class GenericMessage<T> {
 
 	private final T message;
 

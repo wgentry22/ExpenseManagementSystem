@@ -1,4 +1,28 @@
-export const API_URL = "http://localhost:8080"
+export const PORT = process.env.PORT;
+export const CORS_URL = `http://localhost:${PORT}`;
+export const API_URL = "http://localhost:8080";
+export const chartColors = ["#4287f5", "#f54275", "#42e0f5", "#6ff542", "#f5bc42"];
+export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+export const getExpenseTypeName = expenseType => {
+    return EXPENSE_TYPES.filter(type => type.value === expenseType).map(type => type.key).pop();
+}
+export const getDayOfWeek = day => {
+    if (typeof day === 'string') {
+        return day.charAt(0) + day.slice(1).toLowerCase();
+    } else {
+        return null;
+    }
+}
+export const EXPENSE_TYPES = [
+    { key: "Food", value: 'FOOD' },
+    { key: 'Gas', value: 'GAS' },
+    { key: 'Video Games', value: 'VIDEO_GAMES'},
+    { key: 'Rent', value: 'RENT'},
+    { key: 'Bills', value: 'BILLS'}
+]
+export const ItemTypes = {
+    EXPENSE_DONUT: 'donut'
+}
 export const STATES = [
   {
       "name": "Alabama",

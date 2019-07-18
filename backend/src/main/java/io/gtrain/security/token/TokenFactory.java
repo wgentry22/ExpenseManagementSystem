@@ -1,6 +1,7 @@
 package io.gtrain.security.token;
 
 import io.gtrain.config.properties.KeyStoreProperties;
+import io.gtrain.config.properties.TokenProperties;
 import io.gtrain.domain.model.EmsAuthenticationToken;
 import io.gtrain.domain.model.EmsUser;
 import io.gtrain.domain.model.interfaces.EmsUserDetails;
@@ -34,12 +35,13 @@ import java.util.stream.Collectors;
 @Service
 public class TokenFactory implements TokenGenerator, TokenParser, TokenValidator {
 
-	private final long EXPIRES_IN = 1000 * 60 * 60; // 60 minutes
+	private final long EXPIRES_IN;
 	private final JwtBuilder builder;
 	private final JwtParser parser;
 	private final Logger logger = Loggers.getLogger(getClass());
 
-	public TokenFactory(KeyStoreProperties keyStoreProperties) {
+	public TokenFactory(KeyStoreProperties keyStoreProperties, TokenProperties tokenProperties) {
+		EXPIRES_IN = tokenProperties.getExpiry();
 		try {
 			KeyStore keyStore = KeyStore.getInstance(keyStoreProperties.getType());
 			keyStore.load(new ClassPathResource(keyStoreProperties.getPath()).getInputStream(), keyStoreProperties.getPassword());

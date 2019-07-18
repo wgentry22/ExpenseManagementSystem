@@ -32,10 +32,10 @@ const variantIcon = {
 
 export const ApplicationSnackbar = props => {
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   function handleClose(e) {
-    setOpen(true);
+    setOpen(false);
   }
 
   const { variant } = props;
@@ -44,14 +44,14 @@ export const ApplicationSnackbar = props => {
     <Snackbar 
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       key={'applicationSnackbar'}
-      autoHideDuration={6000}
-      open={props.open && !open}
+      autoHideDuration={props.sleep}
+      open={(props.open && open)}
       onClose={handleClose}
     >
       <SnackbarContent 
         className={classes[variant]}
         message={
-          <span id="registered-user" className={classes.message}>
+          <span id="application-snackbar" className={classes.message}>
             <Icon className={clsx(classes.icon, classes.iconVariant)} component={variantIcon[variant]}/>
             {props.message}
           </span>

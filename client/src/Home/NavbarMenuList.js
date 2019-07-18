@@ -1,31 +1,62 @@
 import React from 'react';
-import { ListItem, ListItemText, List, IconButton } from '@material-ui/core';
+import { ListItem, ListItemText, List, ListItemIcon, makeStyles } from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ViewModuleRounded from '@material-ui/icons/ViewModuleRounded';
 
-export const NavbarMenuList = props => {
+const useStyles = makeStyles(theme => ({
+  root: {
+    backgroundColor: theme.palette.background.paper,
+    minWidth: 200,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  li: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  list: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyItems: 'space-between',
+  }
+}));
+
+export const NavbarMenuList = props => { 
+  const classes = useStyles();
+  let index = 0;
 
   const list = [
-    (<IconButton onClick={e => props.handleMenuClose(e)}>
-      <ChevronLeftIcon />
-    </IconButton>)
+    (
+      <div className={classes.li}>
+        <ListItemText primary={'Close'} />
+        <ListItemIcon><ChevronLeftIcon /></ListItemIcon>
+      </div>
+    ),
+    (
+      <div className={classes.li}>
+        <ListItemText primary={'Dashboard'} />
+        <ListItemIcon><ViewModuleRounded /></ListItemIcon>
+      </div>
+    )
   ];
-  for (let i = 1; i < 6; i++) {
-    list.push(`Item ${i}`);
-  }
 
   const listItems = list.map(item => {
     return (
       <ListItem
         button
-        key={item}
+        divider
+        key={`menu-list-item-${++index}`}
       >
-        <ListItemText primary={item} />
+        {item}
       </ListItem>
     )
   });
 
   return (
-    <List>
+    <List className={classes.root}>
       {listItems}
     </List>
   )

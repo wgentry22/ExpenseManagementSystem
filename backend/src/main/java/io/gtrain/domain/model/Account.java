@@ -1,5 +1,9 @@
 package io.gtrain.domain.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.gtrain.domain.json.AccountDeserializer;
+import io.gtrain.domain.json.AccountSerializer;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
@@ -11,13 +15,11 @@ import java.util.StringJoiner;
 /**
  * @author William Gentry
  */
-@Document
+@JsonSerialize(using = AccountSerializer.class)
+@JsonDeserialize(using = AccountDeserializer.class)
 public class Account {
 
-	@Id
-	private ObjectId id;
-
-	private final ObjectId userId;
+	private ObjectId userId;
 
 	private final double balance;
 
@@ -25,24 +27,30 @@ public class Account {
 
 	private final String name;
 
+	private final double monthlyDeposits;
+
+	public Account(double balance, AccountType type, String name, double monthlyDeposits) {
+		this.balance = balance;
+		this.type = type;
+		this.name = name;
+		this.monthlyDeposits = monthlyDeposits;
+	}
+
 	@PersistenceConstructor
-	public Account(ObjectId userId, double balance, AccountType type, String name) {
+	public Account(ObjectId userId, double balance, AccountType type, String name, double monthlyDeposits) {
 		this.userId = userId;
 		this.balance = balance;
 		this.type = type;
 		this.name = name;
-	}
-
-	public ObjectId getId() {
-		return id;
-	}
-
-	public void setId(ObjectId id) {
-		this.id = id;
+		this.monthlyDeposits = monthlyDeposits;
 	}
 
 	public ObjectId getUserId() {
 		return userId;
+	}
+
+	public void setUserId(ObjectId userId) {
+		this.userId = userId;
 	}
 
 	public double getBalance() {
@@ -57,13 +65,17 @@ public class Account {
 		return name;
 	}
 
+	public double getMonthlyDeposits() {
+		return monthlyDeposits;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Account account = (Account) o;
 		return Double.compare(account.balance, balance) == 0 &&
-						Objects.equals(id, account.id) &&
+						Double.compare(account.monthlyDeposits, monthlyDeposits) == 0 &&
 						Objects.equals(userId, account.userId) &&
 						type == account.type &&
 						Objects.equals(name, account.name);
@@ -71,17 +83,17 @@ public class Account {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, userId, balance, type, name);
+		return Objects.hash(userId, balance, type, name, monthlyDeposits);
 	}
 
 	@Override
 	public String toString() {
 		return new StringJoiner(", ", Account.class.getSimpleName() + "[", "]")
-						.add("id=" + id)
 						.add("userId=" + userId)
 						.add("balance=" + balance)
 						.add("type=" + type)
 						.add("name='" + name + "'")
+						.add("monthlyDeposits=" + monthlyDeposits)
 						.toString();
 	}
 }

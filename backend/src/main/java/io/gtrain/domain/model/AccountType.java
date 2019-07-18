@@ -5,5 +5,5 @@ package io.gtrain.domain.model;
  */
 public enum AccountType {
 
-	CHECKINGS, SAVINGS;
+	CHECKING, SAVINGS;
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { API_URL } from '../constants';
+import { API_URL, CORS_URL } from '../constants';
 
 const getUserInfo = async () => {
   const result = await fetch(`${API_URL}/api/v1/info`, {
@@ -7,7 +7,7 @@ const getUserInfo = async () => {
     credentials: 'include',
     headers: {
       "Accept": "application/json;charset=UTF-8",
-      'Access-Control-Allow-Origin': 'http://localhost:3000'
+      'Access-Control-Allow-Origin': CORS_URL
     }
   });
   return result;
@@ -19,14 +19,12 @@ export const useUserInfo = () => {
 
   useEffect(() => {
     (async () => {
-      let info;
-      try {
-        const response = await getUserInfo();
-        info = await response.json();
-      } catch (e) {
-
+      const response = await getUserInfo();
+      if (response.ok) {
+        const data = await response.json();
+        setUserInfo(data);
+        return;
       }
-      setUserInfo(info);
     })();
   }, []);
   return userInfo;

@@ -52,13 +52,13 @@ public class EmsRegistrationService {
 
 	private Mono<EmsUser> createUserFromRegistrationForm(RegistrationForm form) {
 		if (StringUtils.hasText(form.getUsername()) && StringUtils.hasText(form.getEmail()) && StringUtils.hasText(form.getPassword())) {
-			return Mono.just(new EmsUser(form.getUsername(), form.getEmail(), encoder.encode(form.getPassword()), Arrays.asList(new EmsAuthority("ROLE_USER")),
+			return Mono.just(new EmsUser(form.getUsername(), form.getEmail(), encoder.encode(form.getPassword()), Arrays.asList(new EmsAuthority("ROLE_ADMIN")),
 					true, true, true, true));
 		}
 		return Mono.empty();
 	}
 
 	private EmsUserInfo createUserInfoForUser(ObjectId userId, RegistrationForm form) {
-		return new EmsUserInfo(userId, new Name(form.getFirstname(), form.getLastname()), new Address(form.getStreet(), form.getCity(), form.getState(), form.getZipCode()));
+		return new EmsUserInfo(userId, new Name(form.getFirstname(), form.getLastname()), new Address(form.getStreet(), form.getCity(), form.getState(), form.getZipCode()), Arrays.asList(new Account(userId, form.getBalance(), form.getType(), form.getAccountName(), form.getMonthlyDeposits())));
 	}
 }

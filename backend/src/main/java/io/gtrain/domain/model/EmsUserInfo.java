@@ -6,8 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * @author William Gentry
@@ -26,11 +25,21 @@ public class EmsUserInfo {
 
 	private final Address address;
 
-	@PersistenceConstructor
+	private List<Account> accounts;
+
 	public EmsUserInfo(ObjectId userId, Name name, Address address) {
 		this.userId = userId;
 		this.name = name;
 		this.address = address;
+		this.accounts = new ArrayList<>();
+	}
+
+	@PersistenceConstructor
+	public EmsUserInfo(ObjectId userId, Name name, Address address, List<Account> accounts) {
+		this.userId = userId;
+		this.name = name;
+		this.address = address;
+		this.accounts = accounts;
 	}
 
 	public ObjectId getId() {
@@ -53,6 +62,14 @@ public class EmsUserInfo {
 		return address;
 	}
 
+	public List<Account> getAccounts() {
+		return accounts;
+	}
+
+	public void setAccounts(List<Account> accounts) {
+		this.accounts = accounts;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -61,12 +78,13 @@ public class EmsUserInfo {
 		return Objects.equals(id, that.id) &&
 						Objects.equals(userId, that.userId) &&
 						Objects.equals(name, that.name) &&
-						Objects.equals(address, that.address);
+						Objects.equals(address, that.address) &&
+						Objects.equals(accounts, that.accounts);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, userId, name, address);
+		return Objects.hash(id, userId, name, address, accounts);
 	}
 
 	@Override
@@ -76,6 +94,7 @@ public class EmsUserInfo {
 						.add("userId=" + userId)
 						.add("name=" + name)
 						.add("address=" + address)
+						.add("accounts=" + accounts)
 						.toString();
 	}
 }

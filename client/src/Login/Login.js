@@ -2,6 +2,7 @@ import React from 'react';
 import Container from '@material-ui/core/Container';
 import { Formik, Form } from 'formik';
 import { NavLink } from 'react-router-dom';
+import { API_URL, CORS_URL } from '../constants';
 import * as Yup from 'yup';
 import { TextField, Card, CardHeader, CardContent, CardActions, Button, makeStyles, Box } from '@material-ui/core';
 import { ApplicationSnackbar } from '../components/ApplicationSnackbar';
@@ -12,12 +13,12 @@ const LoginFormSchema = Yup.object().shape({
 });
 
 const attemptAuthentication = form => {
-  return fetch("http://localhost:8080/login", {
+  return fetch(`${API_URL}/login`, {
     method: 'POST', 
     mode: 'cors',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',
-      'Access-Control-Allow-Origin': 'http://localhost:3000'
+      'Access-Control-Allow-Origin': CORS_URL
     },
     body: JSON.stringify(form)
   });

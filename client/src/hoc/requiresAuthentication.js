@@ -2,9 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router';
 
 function requiresAuthentication(Component) {
-
-  class RequiresAuthentication extends React.Component {
-
+  return class extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -14,17 +12,12 @@ function requiresAuthentication(Component) {
 
     render() {
       if (this.state.authenticated) {
-        const {forwardedRef, ...rest} = this.props;
-        return <Component ref={forwardedRef} {...rest} />;
+        return <Component userInfo={this.userInfo} {...this.props} />
       } else {
-        return <Redirect to="/error" />;
+        return <Redirect to="/error" />
       }
     }
-
   }
-  return React.forwardRef((props, ref) => {
-    return <RequiresAuthentication {...props} forwardedRef={ref} />
-  });
 }
 
 export default requiresAuthentication;
