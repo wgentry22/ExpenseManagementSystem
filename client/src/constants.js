@@ -20,9 +20,10 @@ export const EXPENSE_TYPES = [
     { key: 'Rent', value: 'RENT'},
     { key: 'Bills', value: 'BILLS'}
 ]
-export const ItemTypes = {
-    EXPENSE_DONUT: 'donut'
-}
+export const ACCOUNT_TYPES = [
+    { key: 'Checking', value: 'CHECKING'},
+    { key: 'Savings', value: 'SAVINGS'},
+]
 export const STATES = [
   {
       "name": "Alabama",

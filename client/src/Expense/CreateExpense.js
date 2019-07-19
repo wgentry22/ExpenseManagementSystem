@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
-import { API_URL, EXPENSE_TYPES } from '../constants';
+import { API_URL, EXPENSE_TYPES, CORS_URL } from '../constants';
 import { Container, TextField, Button, MenuItem, makeStyles, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import { MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
@@ -60,7 +60,7 @@ const attemptCreateExpense = async expense => {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',
-      'Access-Control-Allow-Origin': 'http://localhost:3000',
+      'Access-Control-Allow-Origin': CORS_URL,
       'Access-Control-Expose-Headers': 'Location'
     },
     body: JSON.stringify(expense)
@@ -126,29 +126,20 @@ export const CreateExpense = props => {
         validateOnChange={false}
         validateOnBlur={true}
 
-        onSubmit={ async (values, actions) => {
-          setSubmitted(true);
-          const response = await attemptCreateExpense(values);
-          try {
-            if (response.ok) {
-              setHasError(false);
-              const expenseId = response.headers.get('Location').split('/').pop();
+        onSubmit={ (values, actions) => {
+          setSubmitted(true);      
+          const response = attemptCreateExpense(values);
+          response.then(result => {
+            if (result.ok) {
+              const expenseId = result.headers.get('Location').split('/').pop();
               props.onExpenseCreate(expenseId);
               props.handleClose();
+              actions.resetForm(defaultValues);
+              setHasError(false);
             } else {
               setHasError(true);
-            }
-          } finally {
-            actions.setSubmitting(false);
-            actions.resetForm();
-            actions.setTouched({
-              location: false,
-              expenseType: false,
-              amount: false,
-              date: false
-            });
-            return;
-          }
+            } 
+          });
         }}
 
         render={({

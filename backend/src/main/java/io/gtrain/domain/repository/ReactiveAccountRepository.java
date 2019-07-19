@@ -2,13 +2,14 @@ package io.gtrain.domain.repository;
 
 import io.gtrain.domain.exception.AccountNotFoundException;
 import io.gtrain.domain.model.Account;
-import io.gtrain.domain.model.EmsUser;
 import io.gtrain.domain.model.EmsUserInfo;
 import io.gtrain.domain.repository.interfaces.AccountRepository;
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.FindAndReplaceOptions;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,7 +29,11 @@ public class ReactiveAccountRepository implements AccountRepository {
 	@Override
 	public Mono<String> save(ObjectId userId, Account account) {
 		account.setUserId(userId);
-		return mongoTemplate.save(account, "account").map(Account::getName);
+		return mongoTemplate.findOne(Query.query(Criteria.where("userId").is(userId)), EmsUserInfo.class).flatMap(userInfo -> {
+			userInfo.getAccounts().add(account);
+			return mongoTemplate.findAndReplace(Query.query(Criteria.where("userId").is(userId)), userInfo, new FindAndReplaceOptions().returnNew(), EmsUserInfo.class, "user_info")
+							.flatMap(info -> Mono.just(account.getName()));
+		});
 	}
 
 	@Override
@@ -52,3 +57,4 @@ public class ReactiveAccountRepository implements AccountRepository {
 		});
 	}
 }
+

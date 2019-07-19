@@ -84,7 +84,7 @@ export const MonthlyExpenseSummary = props => {
       <Container maxWidth={'xs'} className={classes.paper}>
         <Card>
           <CardHeader 
-            title={`Monthly Expenses`}
+            title={`Monthly Expenses - ${MONTHS[props.month]} ${props.year}`}
             subheader={`Viewing for ${MONTHS[props.month]} ${props.year}`}
           />
           <CardContent>

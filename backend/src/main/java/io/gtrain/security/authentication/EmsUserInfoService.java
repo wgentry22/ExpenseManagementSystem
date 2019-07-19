@@ -1,5 +1,6 @@
 package io.gtrain.security.authentication;
 
+import io.gtrain.domain.model.Address;
 import io.gtrain.domain.model.EmsAuthenticationToken;
 import io.gtrain.domain.model.EmsUserInfo;
 import io.gtrain.domain.repository.interfaces.EmsUserInfoRepository;
@@ -27,4 +28,7 @@ public class EmsUserInfoService {
 		return Mono.empty();
 	}
 
+	public Mono<EmsUserInfo> attemptUpdateAddress(ObjectId userId, Address address) {
+		return userInfoRepository.updateAddress(userId, address);
+	}
 }

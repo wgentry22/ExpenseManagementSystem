@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAccount } from '../hooks/useAccount';
 import { CircularProgress, Paper, makeStyles, Container, Card, CardHeader, CardContent } from '@material-ui/core';
 import { getExpenseTypeName, chartColors, MONTHS } from '../constants';
 import Chart from 'react-apexcharts';
@@ -19,9 +18,9 @@ const useStyles = makeStyles(theme => ({
 
 export const AccountSummary = props => {
   const classes = useStyles();
-  const { accountId, expenses, month, year } = props;
-  const account = useAccount(accountId);
+  const { account, expenses, month, year } = props;
   const labels = Object.keys(expenses);
+  const cardLabel = `Percentage of monthly deposits ${MONTHS[month]} ${year}`;
 
   const monthlyExpenditures = labels.map(label => {
     return (((expenses[label].reduce((acc, expense) => acc + expense.amount, 0)) / account.monthlyDeposits) * 100).toFixed(2) + '%';
@@ -67,7 +66,13 @@ export const AccountSummary = props => {
       toolbar: {
         show: false
       }
-    }
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: function(value) {
+        return value + '%';
+      }
+    },
   }
 
   if (account && Object.keys(account).length && Object.keys(monthlyExpenditures).filter(entry => !Number.isNaN(entry)).length === 5) {
@@ -78,7 +83,7 @@ export const AccountSummary = props => {
        >
         <Paper>
           <Card>
-            <CardHeader title={account.name} subheader={props.label}/>
+            <CardHeader title={account.name} subheader={cardLabel}/>
             <CardContent>
               <Chart
                 type="bar"

@@ -31,14 +31,24 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 
 export const AccountSummaryByDay = props => {
   const classes = useStyles();
-  const { expenseId, month, year } = props;
+  const { expenseId, month, year, account } = props;
   const expenses = useExpensesInMonthByDay(expenseId, month, year);
+  const chartLabel = `Percentage of monthly income ${MONTHS[month]} ${year}`;
 
   const days = Object.keys(expenses).map(day => {
     return getDayOfWeek(day);
   });
 
   const expenseLabels = EXPENSE_TYPES.map(type => type.key);
+
+  const chartData = expenseLabels.map(label => ({ name: label, data: []}));
+  days.forEach(day => {
+    EXPENSE_TYPES.forEach(type => {
+      const amount = expenses[day.toUpperCase()][type.value].reduce((acc, expense) => acc + expense.amount, 0) || 0;
+      chartData.find(data => data.name === type.key).data.push(amount);
+    })
+  })
+
   
   const chartOptions = {
     xaxis: {
@@ -73,6 +83,12 @@ export const AccountSummaryByDay = props => {
       }
     },
     colors: chartColors,
+    dataLabels: {
+      enabled: true,
+      formatter: function(value) {
+        return Number((value / 100) / account.monthlyDeposits).toLocaleString("en-US", { style: 'percent', minimumFractionDigits: 2})
+      }
+    },
     tooltip: {
       theme: 'dark',
       y: {
@@ -88,11 +104,9 @@ export const AccountSummaryByDay = props => {
       stacked: true,
       stackType: '100%'
     },
-    
   }
 
   if (expenses && Object.keys(expenses).length) {
-    const chartData = getChartData(expenses, expenseLabels, days);
     return (
       <Container 
         maxWidth={'sm'} 
@@ -100,10 +114,10 @@ export const AccountSummaryByDay = props => {
       >
         <Paper>
           <Card>
-            <CardHeader title={`Daily spends for ${MONTHS[month]} ${year}`} subheader={props.label}/>
+            <CardHeader title={account.name} subheader={chartLabel}/>
             <CardContent>
               <Chart
-                type="bar"
+                type={'bar'}
                 height={'260px'}
                 options={chartOptions}
                 series={chartData}

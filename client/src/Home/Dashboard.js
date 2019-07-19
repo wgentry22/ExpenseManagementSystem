@@ -8,7 +8,7 @@ import { AccountSummary } from '../Account/AccountSummary';
 import { AccountSummaryByDay } from '../Account/AccountSummaryByDay';
 
 export const Dashboard = props => {
-  const { expenseId, month, year, accountName } = props;
+  const { expenseId, month, year, account } = props;
   const monthlyExpenses = useExpensesInMonth(expenseId, month, year);
   const label = `Viewing for ${MONTHS[month]} ${year}`;
 
@@ -27,17 +27,17 @@ export const Dashboard = props => {
           width={'100%'}
         >
             {/* <AccountSummary 
-            accountId={accountName}
-            expenses={monthlyExpenses}
-            label={label}
-            month={month}
-            year={year}
-          /> */}
+              expenses={monthlyExpenses}
+              month={month}
+              year={year}
+              account={account}
+            /> */}
             <AccountSummaryByDay
               label={label}
               expenseId={expenseId}
               month={month}
               year={year}
+              account={account}
             />
             <MonthlyExpenseSummary 
               expenses={monthlyExpenses}

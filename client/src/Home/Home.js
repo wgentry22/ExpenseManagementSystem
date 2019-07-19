@@ -10,6 +10,7 @@ import { CreateExpense } from '../Expense/CreateExpense';
 import { DateRange } from '@material-ui/icons';
 import { MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import { CreateAccount } from '../UserInfo/CreateAccount';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,13 +46,15 @@ const useStyles = makeStyles(theme => ({
 
 const Home = props => {
   const classes = useStyles();
-  const userInfo = useUserInfo();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [accountName, setAccountName] = useState("");
+  const [account, setAccount] = useState({});
   const [lastCreatedExpense, setLastCreatedExpense] = useState("");
+  const [lastCreatedAccount, setLastCreatedAccount] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showCreateAccountForm, setShowCreateAccountForm] = useState(false);
   const [date, setDate] = useState(new Date());
-  const [isOpen, setIsOpen] = useState(false);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const userInfo = useUserInfo(lastCreatedAccount);
 
   function toggleMenu(event) {
     if (event.target.classList.contains("MuiListItemText-primary")) {
@@ -64,7 +67,7 @@ const Home = props => {
     }
   }
 
-  function handleSignOut(event) {
+  function handleSignOut() {
     document.cookie='api_token=""; max-age=-1;';
     props.history.push("/");
   }
@@ -82,20 +85,36 @@ const Home = props => {
   }
 
   function handleAccountChange(event) {
-    setAccountName(event.target.value);
+    const acct = userInfo.accounts.find(a => a.name === event.target.value);
+    setAccount(acct);
   }
 
-  if (userInfo && userInfo.name.firstname && userInfo.accounts && userInfo.accounts.length) {
-    if (!Boolean(accountName)) {
-      setAccountName(userInfo.accounts[0].name);
-    }
-    const accounts = userInfo.accounts.map(account => {
+  function handleShowCreateAccount() {
+    setShowCreateAccountForm(true);
+    setMenuOpen(false);
+  }
+
+  function handleCloseCreateAccount() {
+    setShowCreateAccountForm(false);
+  }
+
+  function handleAccountCreate(accountId) {
+    console.log(`Last Created account: ${accountId}`);
+    setLastCreatedAccount(accountId);
+  }
+
+  if (!Object.keys(account).length && userInfo !== null && userInfo.accounts && userInfo.accounts.length) {
+    setAccount(userInfo.accounts[0]);
+  }
+
+  if (userInfo && userInfo.name.firstname && Object.keys(account).length) {
+    const accounts = userInfo.accounts.map(acct => {
       return (
-        <MenuItem key={`account-${account.name}`} value={account.name}>
-          {account.name}
+        <MenuItem key={`account-${acct.name}`} value={acct.name}>
+          {acct.name}
         </MenuItem>
       )
-    })
+    });
     return (
       <div className={classes.root} >
         <AppBar position="relative">
@@ -108,7 +127,10 @@ const Home = props => {
               <MenuIcon />
               <Drawer anchor={"left"} open={menuOpen}>
                 <div className={classes.menu}>
-                  <NavbarMenuList handleMenuClose={toggleMenu}/>
+                  <NavbarMenuList 
+                    handleMenuClose={toggleMenu}
+                    openCreateAccount={handleShowCreateAccount}
+                  />
                 </div>
               </Drawer>
             </IconButton>
@@ -127,7 +149,7 @@ const Home = props => {
                 name="account"
                 label={`Account`}
                 variant="outlined"
-                value={accountName}
+                value={account.name}
                 onChange={e => handleAccountChange(e)}
                 className={classes.account}
                 margin={'dense'}
@@ -144,9 +166,9 @@ const Home = props => {
                   format="MMMM yyyy"
                   label={'Month to view'}
                   margin={'dense'}
-                  open={isOpen}
-                  onOpen={() => setIsOpen(true)}
-                  onClose={() => setIsOpen(false)}
+                  open={isDatePickerOpen}
+                  onOpen={() => setIsDatePickerOpen(true)}
+                  onClose={() => setIsDatePickerOpen(false)}
                   onChange={e => {
                     setDate(e);
                   }}
@@ -171,9 +193,9 @@ const Home = props => {
         </AppBar>
         <Dashboard 
           expenseId={lastCreatedExpense}
-          accountName={userInfo.accounts[0].name}
           month={date.getMonth()}
           year={date.getFullYear()}
+          account={account}
         />
         <Box
           display={'flex'}
@@ -192,6 +214,11 @@ const Home = props => {
             isOpen={isModalOpen}
             handleClose={handleModalClose}
             onExpenseCreate={handleCreatedExpense}
+          />
+          <CreateAccount
+            isOpen={showCreateAccountForm}
+            handleClose={handleCloseCreateAccount}
+            onAccountCreate={handleAccountCreate}
           />
         </Box>
       </div>

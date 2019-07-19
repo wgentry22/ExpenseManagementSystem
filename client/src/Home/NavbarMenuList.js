@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ListItem, ListItemText, List, ListItemIcon, makeStyles } from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ViewModuleRounded from '@material-ui/icons/ViewModuleRounded';
+import {AccountBalance} from '@material-ui/icons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,6 +26,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export const NavbarMenuList = props => { 
+  const { openCreateAccount } = props;
   const classes = useStyles();
   let index = 0;
 
@@ -39,6 +41,18 @@ export const NavbarMenuList = props => {
       <div className={classes.li}>
         <ListItemText primary={'Dashboard'} />
         <ListItemIcon><ViewModuleRounded /></ListItemIcon>
+      </div>
+    ),
+    (
+      <div 
+        className={classes.li}
+        onClick={e => {
+          e.preventDefault();
+          openCreateAccount(e);
+        }}
+      >
+        <ListItemText primary={'Create Account'} />
+        <ListItemIcon><AccountBalance /></ListItemIcon>
       </div>
     )
   ];
