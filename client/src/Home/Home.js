@@ -41,6 +41,9 @@ const useStyles = makeStyles(theme => ({
   },
   appBar: {
     width: '65%'
+  },
+  contained: {
+    color: theme.palette.error
   }
 }))
 
@@ -99,7 +102,6 @@ const Home = props => {
   }
 
   function handleAccountCreate(accountId) {
-    console.log(`Last Created account: ${accountId}`);
     setLastCreatedAccount(accountId);
   }
 

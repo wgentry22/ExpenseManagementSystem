@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ListItem, ListItemText, List, ListItemIcon, makeStyles } from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ViewModuleRounded from '@material-ui/icons/ViewModuleRounded';

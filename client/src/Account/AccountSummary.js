@@ -87,7 +87,6 @@ export const AccountSummary = props => {
             <CardContent>
               <Chart
                 type="bar"
-                height={'260px'}
                 options={chartOptions}
                 series={[{name: `${MONTHS[month]} ${year}`, data: monthlyExpenditures}]}
               />

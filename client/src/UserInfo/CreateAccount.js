@@ -75,7 +75,6 @@ export const CreateAccount = props => {
           response.then(result => {
             if (result.ok) {
               const createdAccount = result.headers.get('Location').split('/').pop();
-              console.log(`Created account id: ${createdAccount}`);
               onAccountCreate(createdAccount);
               actions.resetForm(defaultValues);
               setHasError(false);

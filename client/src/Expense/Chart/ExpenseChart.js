@@ -29,6 +29,7 @@ const ExpenseDoughnut = props => {
     plotOptions: {
       pie: {
         donut: {
+          size: "65%",
           labels: {
             value: {
               formatter: function(value) {
@@ -54,8 +55,6 @@ const ExpenseDoughnut = props => {
       <CardContent>
         <Chart 
           type={'donut'}
-          width={'425px'}
-          height={'300px'}
           series={expenseData}
           options={chartOptions}
         />

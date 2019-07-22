@@ -13,17 +13,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const getChartData = (expenses, labels, days) => {
-  const chartData = labels.map(label => ({ name: label, data: []}));
-  days.forEach(day => {
-    EXPENSE_TYPES.forEach(type => {
-      const amount = expenses[day.toUpperCase()][type.value].reduce((acc, expense) => acc + expense.amount, 0) || 0;
-      chartData.find(data => data.name === type.key).data.push(amount);
-    })
-  })
-  return chartData;
-}
-
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: 'currency',
   currency: 'USD'
@@ -86,7 +75,7 @@ export const AccountSummaryByDay = props => {
     dataLabels: {
       enabled: true,
       formatter: function(value) {
-        return Number((value / 100) / account.monthlyDeposits).toLocaleString("en-US", { style: 'percent', minimumFractionDigits: 2})
+        return Number(value / 100).toLocaleString("en-US", { style: 'percent', minimumFractionDigits: 2})
       }
     },
     tooltip: {
@@ -118,7 +107,8 @@ export const AccountSummaryByDay = props => {
             <CardContent>
               <Chart
                 type={'bar'}
-                height={'260px'}
+                // width={'325px'}
+                // height={'250px'}
                 options={chartOptions}
                 series={chartData}
               />
