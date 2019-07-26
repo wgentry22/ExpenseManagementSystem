@@ -148,7 +148,7 @@ export const CreateAccount = props => {
                   />
                   <TextField 
                     name="monthlyDeposits"
-                    label="Current Balance"
+                    label="Monthly Deposits"
                     error={touched.monthlyDeposits || Boolean(errors.monthlyDeposits) }
                     helperText={errors.monthlyDeposits}
                     fullWidth

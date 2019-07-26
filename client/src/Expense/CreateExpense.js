@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
 import { API_URL, EXPENSE_TYPES, CORS_URL } from '../constants';
-import { Container, TextField, Button, MenuItem, makeStyles, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
+import { Container, TextField, Button, MenuItem, Fab, makeStyles, Dialog, DialogTitle, DialogContent, DialogActions, Box } from '@material-ui/core';
 import { MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { ApplicationSnackbar } from '../components/ApplicationSnackbar';
+import { Add } from '@material-ui/icons';
 
 const locationRegex = /^[a-zA-Z0-9\s'].*/;
 
@@ -20,6 +21,17 @@ const useStyles = makeStyles(theme => ({
     paddingRight: '24px',
     paddingLeft: '24px'
   }
+}));
+
+const useFabStyles = makeStyles(theme => ({
+  fabContainer: {
+    position: 'fixed',
+    marginTop: theme.spacing(15),
+    marginLeft: '50%',
+    marginRight: '50%',
+    bottom: 0,
+    top: 'auto',
+  },
 }));
 
 const ExpenseSchema = Yup.object().shape({
@@ -92,13 +104,13 @@ const snackbarFactory = hasError => {
   }
 }
 
-export const CreateExpense = props => {
+const CreateExpenseForm = props => {
   const classes = useStyles();
   const [submitted, setSubmitted] = useState(false);
   const [hasError, setHasError] = useState(null);
   const [expenseType, setExpenseType] = useState('');
   const [date, setDate] = useState(new Date());
-  const { isOpen, handleClose } = props;
+  const { isOpen, handleClose, onExpenseCreate } = props;
 
 
   const defaultValues = {
@@ -132,8 +144,8 @@ export const CreateExpense = props => {
           response.then(result => {
             if (result.ok) {
               const expenseId = result.headers.get('Location').split('/').pop();
-              props.onExpenseCreate(expenseId);
-              props.handleClose();
+              onExpenseCreate(expenseId);
+              handleClose();
               actions.resetForm(defaultValues);
               setHasError(false);
             } else {
@@ -235,8 +247,8 @@ export const CreateExpense = props => {
                 </Button>
                 <Button 
                   color="secondary" 
-                  onClick={e => {
-                    handleClose(e);
+                  onClick={() => {
+                    handleClose();
                     formikProps.resetForm();
                   }}
                   variant="contained"
@@ -251,5 +263,41 @@ export const CreateExpense = props => {
       >
       </Formik>
     </Container>
+  )
+}
+
+export const CreateExpense = props => {
+  const classes = useFabStyles();
+  const [isOpen, setIsOpen] = useState(false);
+  const { onExpenseCreate } = props;
+
+  function handleFabClick() {
+    setIsOpen(true);
+  }
+
+  function handleCloseCreateExpenseForm() {
+    setIsOpen(false);
+  }
+
+  return (
+    <Box
+      display={'flex'}
+      flexDirection={'column'}
+      justifyContent={'center'}
+      alignItems={'center'}
+      className={classes.fabContainer}
+    >
+      <Fab
+        color={'secondary'}
+        onClick={() => handleFabClick()}
+      >
+        <Add />
+      </Fab>
+      <CreateExpenseForm
+        isOpen={isOpen}
+        handleClose={handleCloseCreateExpenseForm}
+        onExpenseCreate={onExpenseCreate}
+      />
+    </Box>
   )
 }
