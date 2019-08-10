@@ -2,6 +2,7 @@ package io.gtrain.domain.repository;
 
 import io.gtrain.domain.exception.AccountNotFoundException;
 import io.gtrain.domain.model.Account;
+import io.gtrain.domain.model.EmsUser;
 import io.gtrain.domain.model.EmsUserInfo;
 import io.gtrain.domain.repository.interfaces.AccountRepository;
 import org.bson.types.ObjectId;
@@ -13,6 +14,10 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.Logger;
+import reactor.util.Loggers;
+
+import java.util.List;
 
 /**
  * @author William Gentry
@@ -21,6 +26,7 @@ import reactor.core.publisher.Mono;
 public class ReactiveAccountRepository implements AccountRepository {
 
 	private final ReactiveMongoTemplate mongoTemplate;
+	private final Logger logger = Loggers.getLogger(getClass());
 
 	public ReactiveAccountRepository(ReactiveMongoTemplate mongoTemplate) {
 		this.mongoTemplate = mongoTemplate;
@@ -45,8 +51,12 @@ public class ReactiveAccountRepository implements AccountRepository {
 
 	@Override
 	public Mono<Boolean> remove(ObjectId userId, String accountName) {
-		return mongoTemplate.findOne(Query.query(Criteria.where("userId").is(userId)), EmsUserInfo.class).map(userInfo -> {
-			return userInfo.getAccounts().removeIf(account -> account.getName().equals(accountName));
+		return mongoTemplate.findOne(Query.query(Criteria.where("userId").is(userId)), EmsUserInfo.class).flatMap(userInfo -> {
+			logger.info("Attempting to locate account by id {}", accountName);
+			List<Account> accounts = userInfo.getAccounts();
+			final boolean removed = accounts.removeIf(account -> account.getName().equals(accountName));
+			logger.info("Was account removed? {}", removed);
+			return mongoTemplate.update(EmsUserInfo.class).matching(Query.query(Criteria.where("userId").is(userId))).apply(getDeleteAccountUpdate(accounts)).first().map(result -> result.wasAcknowledged());
 		});
 	}
 
@@ -56,5 +66,10 @@ public class ReactiveAccountRepository implements AccountRepository {
 			return Flux.fromIterable(userInfo.getAccounts());
 		});
 	}
-}
 
+	private Update getDeleteAccountUpdate(List<Account> accounts) {
+		Update update = new Update();
+		update.set("accounts", accounts);
+		return update;
+	}
+}

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, Card, CardHeader, CardContent, makeStyles, Paper } from '@material-ui/core';
-import { getExpenseTypeName, chartColors } from '../../constants';
+import { Container, Card, CardHeader, CardContent, makeStyles, Paper, Typography } from '@material-ui/core';
+import { getExpenseTypeName, chartColors, MONTHS } from '../../constants';
 import Chart from 'react-apexcharts';
 
 const useStyles = makeStyles(theme => ({
@@ -64,15 +64,41 @@ const ExpenseDoughnut = props => {
 }
 
 export const ExpenseChart = props => {
-  const { expenses, label} = props;
+  const { expenses, label, month, year } = props;
   const classes = useStyles();
 
   const labels = Object.keys(expenses);
-  return (
-    <Container maxWidth={'sm'} className={classes.paper}>
-      <Paper>
-        <ExpenseDoughnut chartLabel={label} expenses={expenses} labels={labels} />
-      </Paper>
-    </Container>
-  )
+  if (expensesAreEmpty(expenses)) {
+    return (
+      <Container maxWidth={'sm'} className={classes.paper}>
+        <Paper>
+          <Card>
+            <CardHeader title={label} />
+            <CardContent>
+              <Typography>No expenses yet for {MONTHS[month]} {year}</Typography>
+            </CardContent>
+          </Card>
+        </Paper>
+      </Container>
+    )
+  } else {
+    return (
+      <Container maxWidth={'sm'} className={classes.paper}>
+        <Paper>
+          <ExpenseDoughnut chartLabel={label} expenses={expenses} labels={labels} />
+        </Paper>
+      </Container>
+    )
+  }
+}
+
+const expensesAreEmpty = expenses => {
+  let isEmpty = true;
+  for (const expenseType in expenses) {
+    if (!isEmpty) {
+      break;
+    }
+    isEmpty = expenses[expenseType].length === 0;
+  }
+  return isEmpty;
 }

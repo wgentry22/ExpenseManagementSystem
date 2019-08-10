@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles, AppBar, Toolbar, IconButton, Typography, Button, Drawer, List, ListItem, ListItemText, ListItemIcon, Box, TextField, MenuItem, InputAdornment } from '@material-ui/core';
-import { Menu, ChevronLeftOutlined, DateRange, AccountBalance, Dashboard } from '@material-ui/icons';
+import { Menu, ChevronLeftOutlined, DateRange, Dashboard, AccountBox } from '@material-ui/icons';
 import { MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 
@@ -95,7 +95,7 @@ export const NavbarActions = props => {
 
 export const NavbarDrawer = props => {
   const classes = useStyles();
-  const { isOpen, handleDrawerClose, handleCreateAccountModal, showDashboard } = props;
+  const { isOpen, handleDrawerClose, showDashboard, showProfile } = props;
 
   return (
     <Drawer
@@ -129,16 +129,16 @@ export const NavbarDrawer = props => {
           </ListItem>
           <ListItem
             button
-            key={'open-create-account-modal'}
+            key={'open-profile-view'}
             onClick={() => {
               handleDrawerClose();
-              handleCreateAccountModal(true);
+              showProfile()
             }}
           >
-            <ListItemText primary={'Create Account'} />
-            <ListItemIcon>
-              <AccountBalance />
-            </ListItemIcon>
+            <ListItemText primary={'Profile'} />
+              <ListItemIcon>
+                <AccountBox />
+              </ListItemIcon>
           </ListItem>
         </List>
       </div>
@@ -150,7 +150,7 @@ const Navbar = props => {
   const classes = useStyles();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const { title, handleOpenCreateAccount, isCreateAccountOpen } = props;
+  const { title, handleOpenCreateAccount, isCreateAccountOpen, showDashboard, showProfile } = props;
 
   function handleDrawerClose() {
     setIsDrawerOpen(false);
@@ -199,7 +199,9 @@ const Navbar = props => {
         handleDrawerClose={handleDrawerClose}
         isCreateAccountOpen={isCreateAccountOpen}
         handleCreateAccountModal={handleOpenCreateAccount}
-        showDashboard={props.showDashboard}
+        showDashboard={showDashboard}
+        showProfile={showProfile}
+        {...props}
       />
     </div>
   )

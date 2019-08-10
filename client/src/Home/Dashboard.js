@@ -4,7 +4,6 @@ import { MonthlyExpenseSummary } from '../Expense/MonthlyExpenseSummary';
 import { ExpenseChart } from '../Expense/Chart/ExpenseChart';
 import { useExpensesInMonth } from '../hooks/useExpenses';
 import { MONTHS } from '../constants';
-import { AccountSummary } from '../Account/AccountSummary';
 import { AccountSummaryByDay } from '../Account/AccountSummaryByDay';
 
 export const Dashboard = props => {
@@ -19,19 +18,15 @@ export const Dashboard = props => {
         flexDirection={'column'}
         alignContent={'space-between'}
         width={'100%'}
+        marginTop={'-50px'}
       >
         <Box 
           display={'flex'}
           flexDirection={'row'}
           justifyContent={'space-between'}
+          alignItems={'baseline'}
           width={'100%'}
         >
-            {/* <AccountSummary 
-              expenses={monthlyExpenses}
-              month={month}
-              year={year}
-              account={account}
-            /> */}
             <AccountSummaryByDay
               label={label}
               expenseId={expenseId}

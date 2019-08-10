@@ -25,3 +25,15 @@ export const useAccount = accountId => {
   }, [accountId]);
   return account;
 }
+
+export const removeAccount = accountName => {
+  return fetch(`${API_URL}/api/v1/account/${accountName}`, {
+    method: "DELETE",
+    mode: "cors",
+    credentials: 'include',
+    headers: {
+      "Accept": "application/json;charset=UTF-8",
+      'Access-Control-Allow-Origin': CORS_URL
+    }
+  });
+}

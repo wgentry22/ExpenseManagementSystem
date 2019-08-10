@@ -20,7 +20,7 @@ const App = props => {
           <Route exact path="/login" render={routerProps => (<Login {...routerProps} hasError={false}/>)} />
           <Route exact path="/error" render={routerProps => (<Login {...routerProps} hasError={true}/>)} />
           <Route path="/register" component={Registration} />
-          <Route path="/home" component={Home} />
+          <Route path="/home" render={routerProps => (<Home {...routerProps} />)} />
           <Route component={RedirectToLogin} />
         </Switch>
       </BrowserRouter>

@@ -1,20 +1,23 @@
 import React, { useState  } from 'react';
 import { useUserInfo } from '../hooks/useUserInfo';
-import { makeStyles } from '@material-ui/core';
 import requiresAuthentication from '../hoc/requiresAuthentication';
 import { CreateExpense } from '../Expense/CreateExpense';
 import { CreateAccount } from '../UserInfo/CreateAccount';
 import Navbar from './Navbar';
-import { HomeContainer } from '../components/view/HomeContainer';
+import { Route, Switch } from 'react-router-dom';
+import { Dashboard } from './Dashboard';
+import { AdminView } from '../Admin/AdminView';
+import { removeAccount } from '../hooks/useAccount';
 
 const Home = props => {
   const [account, setAccount] = useState({});
   const [lastCreatedExpense, setLastCreatedExpense] = useState("");
   const [lastCreatedAccount, setLastCreatedAccount] = useState("");
+  const [lastRemovedAccount, setLastRemovedAccount] = useState("");
+  const [lastUpdatedAddress, setLastUpdatedAddress] = useState("");
   const [showCreateAccountForm, setShowCreateAccountForm] = useState(false);
   const [date, setDate] = useState(new Date());
-  const [view, setView] = useState("dashboard");
-  const userInfo = useUserInfo(lastCreatedAccount);
+  const userInfo = useUserInfo(lastCreatedAccount, lastUpdatedAddress, lastRemovedAccount);
 
   function handleSignOut() {
     document.cookie='api_token=""; max-age=-1;';
@@ -30,6 +33,10 @@ const Home = props => {
     setAccount(acct);
   }
 
+  function handleAddressUpdate(address) {
+    setLastUpdatedAddress(address.street);
+  }
+
   function handleShowCreateAccount() {
     setShowCreateAccountForm(true);
   }
@@ -42,12 +49,24 @@ const Home = props => {
     setLastCreatedAccount(accountId);
   }
 
+  function handleAccountRemove(accountId) {
+    removeAccount(accountId).then(result => {
+      if (result.status === 204) {
+        setLastRemovedAccount(accountId);
+      }
+    })
+  }
+
   function handleDateChange(date) {
     setDate(date);
   }
 
   function showDashboard() {
-    setView('dashboard');
+    props.history.push("/home/dashboard")
+  }
+
+  function showProfile() {
+    props.history.push("/home/profile")
   }
 
   if (!Object.keys(account).length && userInfo !== null && userInfo.accounts && userInfo.accounts.length) {
@@ -67,13 +86,8 @@ const Home = props => {
           handleOpenCreateAccount={handleShowCreateAccount}
           isCreateAccountOpen={showCreateAccountForm}
           showDashboard={showDashboard}
-        />
-        <HomeContainer
-          view={view}
-          expenseId={lastCreatedExpense}
-          account={account}
-          month={date.getMonth()}
-          year={date.getFullYear()}
+          showProfile={showProfile}
+          {...props}
         />
         <CreateExpense 
           onExpenseCreate={handleCreatedExpense}
@@ -83,6 +97,28 @@ const Home = props => {
           onAccountCreate={handleAccountCreate}
           handleClose={handleCloseCreateAccount}
         />
+        <Switch>
+          <Route exact path="/home/dashboard" render={props => (
+              <Dashboard
+                expenseId={lastCreatedExpense}
+                account={account}
+                month={date.getMonth()}
+                year={date.getFullYear()}
+                {...props}
+              />
+            )} 
+          />
+          <Route exact path="/home/profile" render={props => (
+              <AdminView
+                userInfo={userInfo}
+                handleAddressChange={handleAddressUpdate}
+                onAccountCreate={handleAccountCreate}
+                onAccountRemove={handleAccountRemove}
+                {...props}
+              />
+            )}
+          />
+        </Switch>
       </div>
     )
   } else {

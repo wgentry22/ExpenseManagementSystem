@@ -24,6 +24,15 @@ export const ACCOUNT_TYPES = [
     { key: 'Checking', value: 'CHECKING'},
     { key: 'Savings', value: 'SAVINGS'},
 ]
+
+export const convertStateNameToAbbreviation = name => {
+    return STATES.find(state => state.name === name).abbreviation;
+}
+
+export const getNormalizedAccountType = accountType => {
+    return ACCOUNT_TYPES.find(type => type.value === accountType).key;
+}
+
 export const STATES = [
   {
       "name": "Alabama",

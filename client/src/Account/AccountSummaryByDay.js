@@ -1,6 +1,6 @@
 import React from 'react';
 import { useExpensesInMonthByDay } from '../hooks/useExpenses';
-import { CircularProgress, Paper, makeStyles, Container, Card, CardHeader, CardContent } from '@material-ui/core';
+import { CircularProgress, Paper, makeStyles, Container, Card, CardHeader, CardContent, Typography } from '@material-ui/core';
 import { getDayOfWeek, chartColors, MONTHS, EXPENSE_TYPES } from '../constants';
 import Chart from 'react-apexcharts';
 
@@ -96,28 +96,58 @@ export const AccountSummaryByDay = props => {
   }
 
   if (expenses && Object.keys(expenses).length) {
-    return (
-      <Container 
-        maxWidth={'sm'} 
-        className={classes.paper}
-      >
-        <Paper>
-          <Card>
-            <CardHeader title={account.name} subheader={chartLabel}/>
-            <CardContent>
-              <Chart
-                type={'bar'}
-                // width={'325px'}
-                // height={'250px'}
-                options={chartOptions}
-                series={chartData}
-              />
-            </CardContent>
-          </Card>
-        </Paper>
-      </Container>
-    )
+    if (expensesAreEmpty(expenses)) {
+      return (
+        <Container 
+          maxWidth={'sm'} 
+          className={classes.paper}
+        >
+          <Paper>
+            <Card>
+              <CardHeader title={account.name} subheader={chartLabel}/>
+              <CardContent>
+                <Typography>No expenses yet for {MONTHS[month]} {year}</Typography>
+              </CardContent>
+            </Card>
+          </Paper>
+        </Container>
+      )
+    } else {
+      return (
+        <Container 
+          maxWidth={'sm'} 
+          className={classes.paper}
+        >
+          <Paper>
+            <Card>
+              <CardHeader title={account.name} subheader={chartLabel}/>
+              <CardContent>
+                <Chart
+                  type={'bar'}
+                  options={chartOptions}
+                  series={chartData}
+                />
+              </CardContent>
+            </Card>
+          </Paper>
+        </Container>
+      )
+    }
   } else {
     return <CircularProgress />
   }
+}
+
+// Not the most performant...
+export const expensesAreEmpty = expenses => {
+  let isEmpty = true;
+  for (const day in expenses) {
+    if (!isEmpty) {
+      break;
+    }
+    for (const dailyExpenseInDay in expenses[day]) {
+      isEmpty = expenses[day][dailyExpenseInDay].length === 0;
+    }
+  }
+  return isEmpty;
 }

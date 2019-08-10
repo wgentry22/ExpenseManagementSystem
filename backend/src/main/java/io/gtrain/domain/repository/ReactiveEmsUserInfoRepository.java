@@ -37,7 +37,8 @@ public class ReactiveEmsUserInfoRepository implements EmsUserInfoRepository {
 
 	@Override
 	public Mono<EmsUserInfo> updateAddress(ObjectId userId, Address address) {
-		return mongoTemplate.findAndModify(Query.query(Criteria.where("userId").is(userId)), getUpdateAddressQuery(address), findAndModifyOptions, EmsUserInfo.class);
+		return mongoTemplate.update(EmsUserInfo.class).matching(Query.query(Criteria.where("userId").is(userId)))
+						.apply(getUpdateAddressQuery(address)).withOptions(findAndModifyOptions).findAndModify();
 	}
 
 	private Update getUpdateAddressQuery(Address address) {

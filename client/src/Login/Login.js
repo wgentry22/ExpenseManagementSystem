@@ -55,7 +55,7 @@ const Login = props => {
           if (response.ok) {
             const token = await response.json().then(data => data.token);
             document.cookie = `api_token=${token}; path=/; `
-            props.history.push("/home");
+            props.history.push("/home/dashboard");
             return;
           } else {
             response.text().then(data => actions.setStatus({ creds: data }));

@@ -1,5 +1,6 @@
 import { createMuiTheme } from '@material-ui/core/styles';
 import red from '@material-ui/core/colors/red';
+import { green, yellow } from '@material-ui/core/colors';
 
 export const emsTheme = createMuiTheme({
   palette: {
@@ -14,6 +15,33 @@ export const emsTheme = createMuiTheme({
       main: '#fdd835',
       dark: '#c6a700'
     },
-    error: red,
+    error: {
+      main: red[500]
+    },
   }
+});
+
+export const emsSecondaryTheme = createMuiTheme({
+  palette: {
+    primary: {
+      main: green[500]
+    },
+    secondary: {
+      main: yellow[500]
+    },
+    error: {
+      main: red[500]
+    },
+  }, 
+})
+
+export const emsTertiaryTheme = createMuiTheme({
+  palette: {
+    primary: {
+      main: red[500]
+    },
+    secondary: {
+      main: yellow[500]
+    },
+  }, 
 })
